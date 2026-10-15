@@ -1,0 +1,20 @@
+---
+import {sanity} from '../lib/sanity.js'
+const products = await sanity.fetch(`*[_type == "product" && status ==
+"published"]{name, "slug": slug.current}`)
+---
+<pre>{JSON.stringify(products, null, 2)}</pre>
+
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<link rel="icon" href="/favicon.ico" />
+		<meta name="viewport" content="width=device-width" />
+		<meta name="generator" content={Astro.generator} />
+		<title>Astro</title>
+	</head>
+	<body>
+		<h1>Astro</h1>
+	</body>
+</html>
