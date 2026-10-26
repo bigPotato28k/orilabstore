@@ -117,7 +117,18 @@ export default defineType({
             rows: 3,
             validation: (r) => r.max(160).warning('SEO 描述建議在 160 字內'),
             }),
+        defineField({
+            name: 'ogImage',
+            title: '社交分享縮圖 (Open Graph Image)',
+            type: 'image',
+            group: 'seo',
+            options: {hotspot: true},   // ← 補這個,後台可框選主體位置
+            description: '分享到 LINE/FB 時顯示的圖片,建議 1200×630px 橫圖。若不填,前端自動用主圖裁切生成。',
+        }),
+    
         ],
+
+        
     preview: {
         select: {title: 'productname', subtitle: 'sku', status: 'status', media: 'coverImage'},
         prepare({title, subtitle, status, media}) {

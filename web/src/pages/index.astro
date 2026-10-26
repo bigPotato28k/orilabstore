@@ -1,20 +1,104 @@
 ---
-import {sanity} from '../lib/sanity.js'
-const products = await sanity.fetch(`*[_type == "product" && status ==
-"published"]{name, "slug": slug.current}`)
+import Base from '../layouts/base.astro'
+import { site } from '../config/site.js'
 ---
-<pre>{JSON.stringify(products, null, 2)}</pre>
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<Base title={site.defaultTitle} description={site.defaultDescription}>
+  <section class="hero">
+    <div class="hero__content">
+      <p class="hero__eyebrow">ORILABオリ · WHOLESALE</p>
+
+      <h1>Your Daily Pixel Fluffy Pet World</h1>
+
+      <p>
+        Wholesale embroidered patches and pet lifestyle goods —
+        crafted in our own factory.
+      </p>
+
+      <div class="hero__actions">
+        <a href="/pet-collection" class="hero__secondary">Browse Collections</a>
+        <a href={site.headerCta.href} class="hero__primary">Start Your Order</a>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .hero {
+    display: grid;
+    min-height: 620px;
+    place-items: center;
+    padding: 120px 24px 72px;
+    background: var(--color-surface-soft);
+  }
+
+  .hero__content {
+    width: min(900px, 100%);
+    text-align: center;
+  }
+
+  .hero__eyebrow {
+    margin: 0 0 18px;
+    color: var(--color-brand-primary);
+    font-family: var(--font-pixel);
+    font-size: 11px;
+    line-height: 16px;
+  }
+
+  h1 {
+    margin: 0;
+    color: var(--color-ink);
+    font-size: clamp(36px, 7vw, 72px);
+    font-weight: 500;
+    line-height: 1.18;
+  }
+
+  .hero__content > p:not(.hero__eyebrow) {
+    max-width: 650px;
+    margin: 24px auto 0;
+    color: var(--color-muted);
+    font-size: 16px;
+    line-height: 1.6;
+  }
+
+  .hero__actions {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 32px;
+  }
+
+  .hero__primary,
+  .hero__secondary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    padding: 0 18px;
+    border-radius: var(--radius-control);
+    font-size: 14px;
+    text-decoration: none;
+  }
+
+  .hero__primary {
+    background: var(--color-interactive);
+    color: white;
+  }
+
+  .hero__secondary {
+    border: 1px solid var(--color-border);
+    background: white;
+    color: var(--color-ink);
+  }
+
+  @media (max-width: 600px) {
+    .hero {
+      min-height: 520px;
+      padding-top: 96px;
+    }
+
+    .hero__actions {
+      flex-direction: column;
+    }
+  }
+</style>

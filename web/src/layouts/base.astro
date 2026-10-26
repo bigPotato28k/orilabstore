@@ -1,0 +1,77 @@
+---
+import '../styles/global.css'
+import Header from '../components/header.astro'
+import Footer from '../components/footer.astro'
+import { site } from '../config/site.js'
+
+const {
+  title = site.defaultTitle,
+  description = site.defaultDescription,
+  ogImage = site.defaultOgImage,
+} = Astro.props
+
+const canonical = new URL(Astro.url.pathname, site.url).href
+
+const ogImageAbs = ogImage.startsWith('http')
+  ? ogImage
+  : new URL(ogImage, site.url).href
+
+const orgJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: site.name,
+  url: site.url,
+  logo: new URL(site.logo, site.url).href,
+  email: site.email,
+  sameAs: [site.instagram, site.facebook].filter(Boolean),
+}
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={site.name} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={ogImageAbs} />
+    <meta property="og:url" content={canonical} />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+
+    <link
+      rel="preload"
+      href="/fonts/press-start-2p.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      href="/fonts/noto-sans-tc-regular.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+
+    <script type="application/ld+json" set:html={JSON.stringify(orgJsonLd)} />
+  </head>
+
+  <body>
+    <Header />
+
+    <main>
+      <slot />
+    </main>
+
+    <Footer />
+  </body>
+</html>

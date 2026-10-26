@@ -1,0 +1,151 @@
+import { site } from '../config/site'
+
+// 當前頁高亮:用路徑前綴判斷(/product/xxx 也會高亮所屬大項的邏輯之後可再加)
+const currentPath = Astro.url.pathname
+const isActive = (href) => currentPath === href || currentPath.startsWith(href + '/')
+---
+
+<header class="site-header">
+    <div class="header-inner">
+    
+    <!-- 1. 漢堡開關本體(隱藏)。必須放在 nav 前面,:checked ~ 才選得到 -->
+    <input type="checkbox" id="nav-toggle" class="nav-toggle" aria-hidden="true" />
+
+    <!-- 2. Brand icon + 品牌名(品牌名用文字,不只放圖:SEO 與無障礙都需要) -->
+    <a href="/" class="brand" aria-label="orilabオリ home">
+        <img src="/logo.svg" alt="orilabオリ logo" width="36" height="36" />
+        <span class="brand-name">orilabオリ</span>
+    </a>
+
+    <!-- 3. 漢堡 label:只在手機版顯示(見下方 CSS) -->
+    <label for="nav-toggle" class="hamburger" aria-label="Open menu">
+        <!-- 三條線用 span 畫,不用圖片,零請求 -->
+        <span></span><span></span><span></span>
+    </label>
+
+    <!-- 4. 導航:桌面橫排,手機版由 checkbox 控制開合 -->
+    <nav class="nav-menu" aria-label="Main navigation">
+        {navItems.map((item) => (
+        <a
+          href={item.href}
+          class:list={['nav-link', { active: isActive(item.href) }]}
+          aria-current={isActive(item.href) ? 'page' : undefined}
+        >
+          {item.label}
+        </a>
+        ))}
+
+        <!-- 唯一 CTA,高亮色(色票 Confirm 後換掉這個 placeholder) -->
+        <a href="/contact" class="cta-button">Start Your Order</a>
+    </nav>
+
+  </div>
+</header>
+---
+<style>
+  /* ===== 桌面版(預設)===== */
+  .site-header {
+    position: sticky;          /* 捲動時置頂,B2B 買家隨時能點 CTA */
+    top: 0;
+    z-index: 50;
+    background: #fffaf2;       /* 米白底,Day 2-1 定色票後統一換 CSS 變數 */
+    border-bottom: 1px solid #eee3d3;
+  }
+  .header-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0.75rem 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+  }
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-decoration: none;
+    color: #3a2e26;
+    font-weight: 700;
+    font-size: 1.15rem;
+  }
+  .nav-toggle {
+    display: none;             /* checkbox 本體永遠隱藏 */
+  }
+  .hamburger {
+    display: none;             /* 桌面版不顯示漢堡 */
+  }
+  .nav-menu {
+    margin-left: auto;         /* 把導航推到右側 */
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+  }
+  .nav-link {
+    text-decoration: none;
+    color: #3a2e26;
+    font-size: 0.95rem;
+  }
+  .nav-link:hover {
+    color: #c2703e;            /* 點綴色 placeholder */
+  }
+  .nav-link.active {
+    font-weight: 700;
+    border-bottom: 2px solid #c2703e;
+  }
+  .cta-button {
+    background: #c2703e;       /* 高亮色 placeholder */
+    color: #fff;
+    padding: 0.5rem 1.1rem;
+    border-radius: 999px;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 0.95rem;
+    white-space: nowrap;       /* 按鈕文字不換行,防手機版爆版 */
+  }
+
+  /* ===== 手機版(<= 768px)===== */
+  @media (max-width: 768px) {
+    .hamburger {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 5px;
+      margin-left: auto;       /* 漢堡推到最右 */
+      cursor: pointer;
+      padding: 0.5rem;         /* 加大點擊區域,觸控友善 */
+    }
+    .hamburger span {
+      display: block;
+      width: 24px;
+      height: 2px;
+      background: #3a2e26;
+    }
+    .nav-menu {
+      display: none;           /* 手機版預設收起 */
+      position: absolute;
+      top: 100%;               /* 接在 header 正下方 */
+      left: 0;
+      right: 0;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0;
+      background: #fffaf2;
+      border-bottom: 1px solid #eee3d3;
+      padding: 0.5rem 1.25rem 1rem;
+    }
+    .nav-link {
+      display: block;
+      width: 100%;
+      padding: 0.85rem 0;      /* 觸控目標 >= 44px 高 */
+      border-bottom: 1px solid #f3e9da;
+    }
+    .cta-button {
+      margin-top: 0.85rem;
+    }
+    /* ★ 核心:checkbox 打勾時,展開它後面的 nav */
+    .nav-toggle:checked ~ .nav-menu {
+      display: flex;
+    }
+  }
+</style>
+

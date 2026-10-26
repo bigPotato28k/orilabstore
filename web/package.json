@@ -12,6 +12,7 @@
     "astro": "astro"
   },
   "dependencies": {
+    "@astrojs/sitemap": "^3.7.4",
     "@sanity/client": "^8.9.0",
     "@sanity/image-url": "^2.1.1",
     "astro": "^7.3.8"
