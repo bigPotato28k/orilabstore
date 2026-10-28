@@ -23,30 +23,30 @@ export const site = {
     { label: 'Download-Catalog', href: '/catalog' },
     { label: 'Contact', href: '/contact' },
   ],
-  headerCTR: { label: 'Start-your-order' , href: '/contact'},
+  headerCta: { label: 'Start-your-order' , href: '/contact'},
   
   //Footer nav setting
   footer: { 
     description: 'Small stitches. Soft days. Wholesale embroidered patches & pet lifestyle goods',
     
-    shopArea : [
+    shopLinks : [
       { label: 'Pet-collection' , href : '/pet-collection'},
       { label: 'Embroidered-Patches' , href: '/patch-collection'},
       { label: 'Download-Catalog' , href: '/catalog'},
     ],
 
-    company : [
+    companyLinks : [
       { label: 'Our-Story' , href : '/about'},
       { label: 'Wholesale-Policy' , href: '/wholesale-terms'},
       { label: 'Privacy-Policy' , href:  '/privacy'},
     ],
-  },
 
-  //Add config
-  sampleKit: {
+    sampleKit: {
       enabled: true,
       label: 'Request a Sample Kit',
       href: '/contact?intent=sample-kit',
     },
+  },
+
 };
 

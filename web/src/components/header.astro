@@ -1,4 +1,5 @@
-import { site } from '../config/site'
+---
+import { site } from '../config/site.js'
 
 // 當前頁高亮:用路徑前綴判斷(/product/xxx 也會高亮所屬大項的邏輯之後可再加)
 const currentPath = Astro.url.pathname
@@ -25,7 +26,7 @@ const isActive = (href) => currentPath === href || currentPath.startsWith(href +
 
     <!-- 4. 導航:桌面橫排,手機版由 checkbox 控制開合 -->
     <nav class="nav-menu" aria-label="Main navigation">
-        {navItems.map((item) => (
+        {site.navigation.map((item) => (
         <a
           href={item.href}
           class:list={['nav-link', { active: isActive(item.href) }]}
