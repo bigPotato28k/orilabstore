@@ -2,7 +2,7 @@
 const { product, imageUrl, index = 0 } = Astro.props
 
 const productName = product?.productname || 'Best seller coming soon'
-const collectionName = product?.selectCollection?.title || 'ORILAB'
+const collectionName = product?.selectCollection?.name || 'ORILAB'
 const productHref = product?.slug?.current ? `/product/${product.slug.current}` : undefined
 ---
 

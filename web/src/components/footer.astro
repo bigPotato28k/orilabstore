@@ -8,13 +8,14 @@ const whatsappHref = `https://wa.me/${site.whatsapp.replace(/\D/g, '')}`
 <footer class="site-footer">
   <div class="footer-shell">
     <section class="footer-brand">
-      <a href="/" class="footer-brand__lockup" aria-label="orilabオリ home">
-        <span class="footer-brand__pixels" aria-hidden="true">
-          <i></i><i></i>
-        </span>
-
-        <span class="footer-brand__desktop-name">orilabオリ</span>
-        <span class="footer-brand__mobile-name">ORILAB</span>
+      <a href="/" class="footer-brand__lockup" aria-label="orilab home">
+        <img
+          class="footer-brand__logo"
+          src="/images/footer-orilab-logo.svg"
+          alt="orilab"
+          width="292"
+          height="57"
+        />
       </a>
 
       <p>{site.footer.description}</p>
@@ -100,7 +101,8 @@ const whatsappHref = `https://wa.me/${site.whatsapp.replace(/\D/g, '')}`
 
 <style>
   .site-footer {
-    background: var(--color-surface-soft);
+    background: var(--color-ink);
+    color: white;
   }
 
   .footer-shell {
@@ -112,51 +114,18 @@ const whatsappHref = `https://wa.me/${site.whatsapp.replace(/\D/g, '')}`
     min-height: 430px;
     margin: 0 auto;
     padding: 34px 48px 0;
-    border-radius: var(--radius-card);
-    background: var(--color-ink);
-    color: white;
   }
 
   .footer-brand__lockup {
     display: flex;
-    flex-direction: column;
-    gap: 20px;
     width: max-content;
-    color: white;
-    font-family: var(--font-pixel);
     text-decoration: none;
   }
 
-  .footer-brand__pixels {
-    position: relative;
+  .footer-brand__logo {
     display: block;
-    width: 26px;
-    height: 24px;
-  }
-
-  .footer-brand__pixels i:first-child {
-    display: block;
-    width: 14px;
-    height: 14px;
-    background: var(--color-brand-primary);
-  }
-
-  .footer-brand__pixels i:last-child {
-    position: absolute;
-    top: 12px;
-    left: 16px;
-    width: 12px;
-    height: 12px;
-    background: var(--color-brand-accent);
-  }
-
-  .footer-brand__desktop-name {
-    font-size: 16px;
-    line-height: 22px;
-  }
-
-  .footer-brand__mobile-name {
-    display: none;
+    width: auto;
+    height: 44px;
   }
 
   .footer-brand p {
@@ -319,7 +288,6 @@ const whatsappHref = `https://wa.me/${site.whatsapp.replace(/\D/g, '')}`
       gap: 18px;
       min-height: 0;
       padding: 24px;
-      border-radius: var(--radius-shell);
     }
 
     .footer-brand {
@@ -327,40 +295,8 @@ const whatsappHref = `https://wa.me/${site.whatsapp.replace(/\D/g, '')}`
       border-bottom: 1px solid var(--color-border);
     }
 
-    .footer-brand__lockup {
-      flex-direction: row;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .footer-brand__pixels {
-      width: 32px;
-      height: 14px;
-    }
-
-    .footer-brand__pixels i:first-child {
-      width: 14px;
-      height: 14px;
-      border-radius: var(--radius-pixel);
-    }
-
-    .footer-brand__pixels i:last-child {
-      top: 2px;
-      left: 22px;
-      width: 10px;
-      height: 10px;
-      border-radius: var(--radius-pixel);
-      background: var(--color-brand-primary);
-    }
-
-    .footer-brand__desktop-name {
-      display: none;
-    }
-
-    .footer-brand__mobile-name {
-      display: block;
-      font-size: 12px;
-      line-height: 18px;
+    .footer-brand__logo {
+      height: 30px;
     }
 
     .footer-brand p {

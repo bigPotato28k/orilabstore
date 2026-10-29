@@ -24,7 +24,7 @@ export const site = {
 
   header: {
     cta: {
-      label: 'Start Your Order →',
+      label: 'Send Inquire',
       href: '/contact',
     },
     seasonalPoster: {

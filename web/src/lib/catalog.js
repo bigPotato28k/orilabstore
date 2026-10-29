@@ -1,8 +1,8 @@
 import { sanity } from './sanity.js'
 
 export const marketLines = {
-  pet: { title: 'Pet Collection Market', collectionType: 'petcollection', route: '/pet-collection', filterLabel: 'Collection' },
-  patch: { title: 'Patch Collection Market', collectionType: 'patchcollection', route: '/patch-collection', filterLabel: 'Theme' },
+  pet: { title: 'Pet Collection Market', collectionType: 'petcollection', route: '/pet-collection', filterLabel: 'Collection', cover: '/images/market/pet-collection-cover.webp' },
+  patch: { title: 'Patch Collection Market', collectionType: 'patchcollection', route: '/patch-collection', filterLabel: 'Theme', cover: '/images/market/patch-collection-cover.webp' },
 }
 
 const productFields = `
