@@ -1,52 +1,73 @@
 export const site = {
-  
-  //基本SEO setting 
   name: 'orilabオリ',
-  url: 'https://www.orilabstore.com',   // 必須與 astro.config.mjs 的 site 完全一致
-  email: 'orilabofficial.store@gmail.com',
-  instagram: 'https://www.instagram.com/orilab.store',
-  whatsapp: '',
-  facebook: '',  // 建好粉專再填網址;filter(Boolean) 會自動忽略空值
+  url: 'https://www.orilabstore.com',
+  logo: '/favicon.svg',
 
-  //分享web 
+  email: 'sales_orilab@eklabel.com',
+  whatsapp: '+852 6219 8477',
+  address: 'China | Dongguan | Hong Kong | Australia',
+  instagram: 'https://www.instagram.com/orilab.store',
+
   defaultTitle: 'orilabオリ | Wholesale Embroidered Patches & Pet Lifestyle Goods',
   defaultDescription:
     'Wholesale embroidered patches and pet lifestyle goods, crafted in our own factory. OEM & custom orders welcome.',
   defaultOgImage: '/og-default.jpg',
   defaultType: 'website',
 
-  //Header nav setting
   navigation: [
-    { label: 'About', href: '/about' },
-    { label: 'Pet-collection', href: '/pet-collection' },
-    { label: 'Patch-collection', href: '/patch-collection' },
-    { label: 'Download-Catalog', href: '/catalog' },
+    { label: 'About Us', href: '/about' },
+    { label: 'Pet Collection', href: '/pet-collection' },
+    { label: 'Patch Collection', href: '/patch-collection' },
+    { label: 'Download Catalog', href: '/catalog' },
     { label: 'Contact', href: '/contact' },
   ],
-  headerCta: { label: 'Start-your-order' , href: '/contact'},
-  
-  //Footer nav setting
-  footer: { 
-    description: 'Small stitches. Soft days. Wholesale embroidered patches & pet lifestyle goods',
-    
-    shopLinks : [
-      { label: 'Pet-collection' , href : '/pet-collection'},
-      { label: 'Embroidered-Patches' , href: '/patch-collection'},
-      { label: 'Download-Catalog' , href: '/catalog'},
-    ],
 
-    companyLinks : [
-      { label: 'Our-Story' , href : '/about'},
-      { label: 'Wholesale-Policy' , href: '/wholesale-terms'},
-      { label: 'Privacy-Policy' , href:  '/privacy'},
-    ],
-
-    sampleKit: {
-      enabled: true,
-      label: 'Request a Sample Kit',
-      href: '/contact?intent=sample-kit',
+  header: {
+    cta: {
+      label: 'Start Your Order →',
+      href: '/contact',
+    },
+    seasonalPoster: {
+      src: '/images/menu-seasonal-poster.webp',
+      alt: 'A selection of orilab embroidered patches and stationery',
+      width: 650,
+      height: 330,
     },
   },
 
-};
+  footer: {
+    description:
+      'Small stitches. Soft days. Wholesale embroidered patches & pet lifestyle goods.',
 
+    shopLinks: [
+      { label: 'Pet Collection', href: '/pet-collection' },
+      { label: 'Embroidered Patches', href: '/patch-collection' },
+      { label: 'Monthly Series', href: '/patch-collection', mobile: false },
+      { label: 'Download Catalog', href: '/catalog' },
+    ],
+
+    companyLinks: [
+      { label: 'Our Story', href: '/about' },
+      { label: 'Shop Policy', href: '/wholesale-terms' },
+      { label: 'Privacy Policy', href: '/privacy' },
+    ],
+
+    sampleKit: {
+      label: 'Request a Sample Kit',
+      href: '/contact?intent=sample-kit',
+    },
+
+    socialLinks: [
+      { label: 'Google', href: '', icon: '/images/social/google.svg' },
+      {
+        label: 'Instagram',
+        href: 'https://www.instagram.com/orilab.store',
+        icon: '/images/social/instagram.svg',
+      },
+      { label: 'Messenger', href: '', icon: '/images/social/messenger.svg' },
+      { label: 'Facebook', href: '', icon: '/images/social/facebook.svg' },
+      { label: 'WhatsApp', href: '', icon: '/images/social/whatsapp.svg' },
+      { label: 'Threads', href: '', icon: '/images/social/threads.svg' },
+    ],
+  },
+}

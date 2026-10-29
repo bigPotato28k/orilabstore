@@ -1,152 +1,488 @@
 ---
 import { site } from '../config/site.js'
 
-// 當前頁高亮:用路徑前綴判斷(/product/xxx 也會高亮所屬大項的邏輯之後可再加)
 const currentPath = Astro.url.pathname
-const isActive = (href) => currentPath === href || currentPath.startsWith(href + '/')
+const isActive = (href) =>
+  currentPath === href || currentPath.startsWith(`${href}/`)
 ---
 
 <header class="site-header">
-    <div class="header-inner">
-    
-    <!-- 1. 漢堡開關本體(隱藏)。必須放在 nav 前面,:checked ~ 才選得到 -->
-    <input type="checkbox" id="nav-toggle" class="nav-toggle" aria-hidden="true" />
-
-    <!-- 2. Brand icon + 品牌名(品牌名用文字,不只放圖:SEO 與無障礙都需要) -->
+  <div class="header-inner">
     <a href="/" class="brand" aria-label="orilabオリ home">
-        <img src="/logo.svg" alt="orilabオリ logo" width="36" height="36" />
-        <span class="brand-name">orilabオリ</span>
+      <span class="brand-pixels" aria-hidden="true">
+        <i></i><i></i>
+      </span>
+      <span class="brand-name">orilabオリ</span>
     </a>
 
-    <!-- 3. 漢堡 label:只在手機版顯示(見下方 CSS) -->
-    <label for="nav-toggle" class="hamburger" aria-label="Open menu">
-        <!-- 三條線用 span 畫,不用圖片,零請求 -->
-        <span></span><span></span><span></span>
-    </label>
-
-    <!-- 4. 導航:桌面橫排,手機版由 checkbox 控制開合 -->
-    <nav class="nav-menu" aria-label="Main navigation">
-        {site.navigation.map((item) => (
-        <a
-          href={item.href}
-          class:list={['nav-link', { active: isActive(item.href) }]}
-          aria-current={isActive(item.href) ? 'page' : undefined}
-        >
-          {item.label}
-        </a>
-        ))}
-
-        <!-- 唯一 CTA,高亮色(色票 Confirm 後換掉這個 placeholder) -->
-        <a href="/contact" class="cta-button">Start Your Order</a>
+    <nav class="desktop-nav" aria-label="Main navigation">
+      {
+        site.navigation.map((item) => (
+          <a
+            href={item.href}
+            class:list={[
+              'desktop-nav__link',
+              { 'is-active': isActive(item.href) },
+            ]}
+            aria-current={isActive(item.href) ? 'page' : undefined}
+          >
+            {item.label}
+          </a>
+        ))
+      }
     </nav>
 
+    <a class="desktop-cta" href={site.header.cta.href}>
+      {site.header.cta.label}
+    </a>
+
+    <button
+      class="mobile-menu-trigger"
+      type="button"
+      aria-label="Open navigation menu"
+      aria-haspopup="dialog"
+      aria-controls="mobile-navigation-menu"
+      aria-expanded="false"
+      data-menu-trigger
+    >
+      <span></span><span></span><span></span>
+    </button>
   </div>
 </header>
----
+
+<dialog
+  class="mobile-menu"
+  id="mobile-navigation-menu"
+  aria-label="Main navigation"
+  data-mobile-menu
+>
+  <section class="mobile-menu__sheet">
+    <button
+      class="mobile-menu__handle"
+      type="button"
+      aria-label="Close navigation menu"
+      data-menu-handle
+    >
+      <span></span>
+    </button>
+
+    <div class="mobile-menu__poster">
+      <img
+        src={site.header.seasonalPoster.src}
+        alt={site.header.seasonalPoster.alt}
+        width={site.header.seasonalPoster.width}
+        height={site.header.seasonalPoster.height}
+      />
+    </div>
+
+    <div class="mobile-menu__divider"></div>
+
+    <nav class="mobile-menu__nav" aria-label="Mobile navigation">
+      {
+        site.navigation.map((item) => (
+          <a
+            href={item.href}
+            class:list={[
+              'mobile-menu__link',
+              { 'is-active': isActive(item.href) },
+            ]}
+            aria-current={isActive(item.href) ? 'page' : undefined}
+          >
+            <span class="mobile-menu__icon" aria-hidden="true">
+              <i></i><i></i>
+            </span>
+
+            <span>
+              {item.label === 'Patch Collection'
+                ? 'Embroidered Patches'
+                : item.label}
+            </span>
+
+            {
+              isActive(item.href) && (
+                <i class="mobile-menu__active-indicator" aria-hidden="true"></i>
+              )
+            }
+          </a>
+        ))
+      }
+    </nav>
+  </section>
+</dialog>
+
+<script>
+  const dialog = document.querySelector('[data-mobile-menu]')
+  const trigger = document.querySelector('[data-menu-trigger]')
+  const handle = dialog?.querySelector('[data-menu-handle]')
+
+  if (dialog instanceof HTMLDialogElement && trigger instanceof HTMLButtonElement) {
+    const setExpanded = (expanded) => {
+      trigger.setAttribute('aria-expanded', String(expanded))
+    }
+
+    const closeMenu = () => dialog.close()
+
+    trigger.addEventListener('click', () => {
+      dialog.showModal()
+      setExpanded(true)
+      document.body.classList.add('menu-is-open')
+    })
+
+    dialog.addEventListener('click', (event) => {
+      if (event.target === dialog) closeMenu()
+    })
+
+    dialog.addEventListener('close', () => {
+      setExpanded(false)
+      document.body.classList.remove('menu-is-open')
+      dialog.style.removeProperty('--sheet-drag-offset')
+    })
+
+    let startY = 0
+    let dragDistance = 0
+
+    handle?.addEventListener('pointerdown', (event) => {
+      startY = event.clientY
+      dragDistance = 0
+      handle.setPointerCapture(event.pointerId)
+    })
+
+    handle?.addEventListener('pointermove', (event) => {
+      dragDistance = Math.max(0, event.clientY - startY)
+      dialog.style.setProperty('--sheet-drag-offset', `${dragDistance}px`)
+    })
+
+    handle?.addEventListener('pointerup', (event) => {
+      handle.releasePointerCapture(event.pointerId)
+
+      if (dragDistance > 88) closeMenu()
+      else dialog.style.removeProperty('--sheet-drag-offset')
+    })
+  }
+</script>
+
 <style>
-  /* ===== 桌面版(預設)===== */
   .site-header {
-    position: sticky;          /* 捲動時置頂,B2B 買家隨時能點 CTA */
-    top: 0;
+    position: fixed;
+    inset: 0 0 auto;
     z-index: 50;
-    background: #fffaf2;       /* 米白底,Day 2-1 定色票後統一換 CSS 變數 */
-    border-bottom: 1px solid #eee3d3;
-  }
-  .header-inner {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0.75rem 1.25rem;
-    display: flex;
-    align-items: center;
-    gap: 1.5rem;
-  }
-  .brand {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    text-decoration: none;
-    color: #3a2e26;
-    font-weight: 700;
-    font-size: 1.15rem;
-  }
-  .nav-toggle {
-    display: none;             /* checkbox 本體永遠隱藏 */
-  }
-  .hamburger {
-    display: none;             /* 桌面版不顯示漢堡 */
-  }
-  .nav-menu {
-    margin-left: auto;         /* 把導航推到右側 */
-    display: flex;
-    align-items: center;
-    gap: 1.5rem;
-  }
-  .nav-link {
-    text-decoration: none;
-    color: #3a2e26;
-    font-size: 0.95rem;
-  }
-  .nav-link:hover {
-    color: #c2703e;            /* 點綴色 placeholder */
-  }
-  .nav-link.active {
-    font-weight: 700;
-    border-bottom: 2px solid #c2703e;
-  }
-  .cta-button {
-    background: #c2703e;       /* 高亮色 placeholder */
-    color: #fff;
-    padding: 0.5rem 1.1rem;
-    border-radius: 999px;
-    text-decoration: none;
-    font-weight: 700;
-    font-size: 0.95rem;
-    white-space: nowrap;       /* 按鈕文字不換行,防手機版爆版 */
+    height: 88px;
+    background: var(--color-surface);
   }
 
-  /* ===== 手機版(<= 768px)===== */
-  @media (max-width: 768px) {
-    .hamburger {
+  .header-inner {
+    display: grid;
+    grid-template-columns: minmax(230px, 1fr) auto minmax(230px, 1fr);
+    align-items: center;
+    width: min(1440px, 100%);
+    height: 100%;
+    margin: 0 auto;
+    padding: 0 56px;
+  }
+
+  .brand,
+  .brand-pixels,
+  .desktop-nav,
+  .mobile-menu__icon {
+    display: flex;
+    align-items: center;
+  }
+
+  .brand {
+    gap: 22px;
+    width: max-content;
+    color: var(--color-ink);
+    text-decoration: none;
+  }
+
+  .brand-pixels {
+    position: relative;
+    width: 12px;
+    height: 22px;
+  }
+
+  .brand-pixels i:first-child {
+    width: 12px;
+    height: 12px;
+    background: var(--color-brand-primary);
+  }
+
+  .brand-pixels i:last-child {
+    position: absolute;
+    top: 8px;
+    left: 12px;
+    width: 10px;
+    height: 10px;
+    background: var(--color-brand-accent);
+  }
+
+  .brand-name {
+    font-family: var(--font-pixel);
+    font-size: 14px;
+    line-height: 20px;
+    white-space: nowrap;
+  }
+
+  .desktop-nav {
+    justify-content: center;
+    gap: 30px;
+    padding: 6px 16px;
+    white-space: nowrap;
+  }
+
+  .desktop-nav__link {
+    color: var(--color-ink);
+    font-size: 12px;
+    line-height: 18px;
+    text-decoration: none;
+  }
+
+  .desktop-nav__link:hover,
+  .desktop-nav__link:focus-visible,
+  .desktop-nav__link.is-active {
+    color: var(--color-brand-primary);
+  }
+
+  .desktop-nav__link.is-active {
+    font-weight: 900;
+  }
+
+  .desktop-cta {
+    justify-self: end;
+    min-width: 124px;
+    padding: 12px 14px;
+    border-radius: var(--radius-control);
+    background: var(--color-brand-primary);
+    color: white;
+    font-size: 11px;
+    font-weight: 800;
+    line-height: 16px;
+    text-align: center;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: background-color 160ms ease, transform 160ms ease;
+  }
+
+  .desktop-cta:hover,
+  .desktop-cta:focus-visible {
+    background: var(--color-brand-primary-hover);
+    transform: translateY(-1px);
+  }
+
+  .mobile-menu-trigger,
+  .mobile-menu {
+    display: none;
+  }
+
+  @media (max-width: 767px) {
+    .site-header {
+      height: 72px;
+    }
+
+    .header-inner {
+      display: flex;
+      justify-content: space-between;
+      padding: 0 20px;
+    }
+
+    .desktop-nav,
+    .desktop-cta {
+      display: none;
+    }
+
+    .mobile-menu-trigger {
+      display: grid;
+      place-content: center;
+      gap: 4px;
+      width: 32px;
+      height: 32px;
+      padding: 0;
+      border: 0;
+      border-radius: var(--radius-control);
+      background: var(--color-brand-primary);
+    }
+
+    .mobile-menu-trigger span {
+      width: 14px;
+      height: 2px;
+      border-radius: 1px;
+      background: white;
+      transition: transform 180ms ease, opacity 180ms ease;
+    }
+
+    .mobile-menu-trigger[aria-expanded='true'] span:first-child {
+      transform: translateY(6px) rotate(45deg);
+    }
+
+    .mobile-menu-trigger[aria-expanded='true'] span:nth-child(2) {
+      opacity: 0;
+    }
+
+    .mobile-menu-trigger[aria-expanded='true'] span:last-child {
+      transform: translateY(-6px) rotate(-45deg);
+    }
+
+    .mobile-menu {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      max-width: none;
+      height: 100dvh;
+      max-height: none;
+      margin: 0;
+      padding: 0;
+      border: 0;
+      background: transparent;
+      overflow: hidden;
+    }
+
+    .mobile-menu[open] {
+      display: block;
+    }
+
+    .mobile-menu::backdrop {
+      background: rgb(30 30 27 / 42%);
+      animation: menu-fade-in 220ms ease-out;
+    }
+
+    .mobile-menu__sheet {
+      position: absolute;
+      right: 12px;
+      bottom: 16px;
+      left: 12px;
       display: flex;
       flex-direction: column;
-      justify-content: center;
-      gap: 5px;
-      margin-left: auto;       /* 漢堡推到最右 */
-      cursor: pointer;
-      padding: 0.5rem;         /* 加大點擊區域,觸控友善 */
+      gap: 12px;
+      width: min(351px, calc(100% - 24px));
+      max-height: calc(100dvh - 88px);
+      margin: 0 auto;
+      padding: 24px 12px 16px;
+      border-radius: var(--radius-shell);
+      background: var(--color-surface);
+      transform: translateY(var(--sheet-drag-offset, 0));
+      transition: transform 220ms ease-out;
+      overflow: auto;
+      animation: sheet-rise 260ms cubic-bezier(.2, .8, .2, 1);
     }
-    .hamburger span {
-      display: block;
-      width: 24px;
-      height: 2px;
-      background: #3a2e26;
-    }
-    .nav-menu {
-      display: none;           /* 手機版預設收起 */
+
+    .mobile-menu__handle {
       position: absolute;
-      top: 100%;               /* 接在 header 正下方 */
-      left: 0;
-      right: 0;
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 0;
-      background: #fffaf2;
-      border-bottom: 1px solid #eee3d3;
-      padding: 0.5rem 1.25rem 1rem;
+      top: 0;
+      left: 50%;
+      display: grid;
+      place-items: start center;
+      width: 88px;
+      height: 44px;
+      padding-top: 8px;
+      border: 0;
+      background: transparent;
+      transform: translateX(-50%);
+      touch-action: none;
     }
-    .nav-link {
+
+    .mobile-menu__handle span {
+      width: 44px;
+      height: 4px;
+      border-radius: var(--radius-pixel);
+      background: var(--color-border);
+    }
+
+    .mobile-menu__poster {
+      width: 100%;
+      height: 165px;
+      border-radius: var(--radius-control);
+      background: var(--color-border);
+      overflow: hidden;
+    }
+
+    .mobile-menu__poster img {
       display: block;
       width: 100%;
-      padding: 0.85rem 0;      /* 觸控目標 >= 44px 高 */
-      border-bottom: 1px solid #f3e9da;
+      height: 100%;
+      object-fit: cover;
     }
-    .cta-button {
-      margin-top: 0.85rem;
+
+    .mobile-menu__divider {
+      width: 100%;
+      height: 1px;
+      background: var(--color-border);
     }
-    /* ★ 核心:checkbox 打勾時,展開它後面的 nav */
-    .nav-toggle:checked ~ .nav-menu {
+
+    .mobile-menu__nav {
       display: flex;
+      flex-direction: column;
+      gap: 4px;
+      width: 100%;
+    }
+
+    .mobile-menu__link {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-height: 48px;
+      padding: 0 12px;
+      border-radius: var(--radius-control);
+      color: var(--color-ink);
+      font-size: 16px;
+      line-height: 22px;
+      text-decoration: none;
+    }
+
+    .mobile-menu__link.is-active,
+    .mobile-menu__link:hover,
+    .mobile-menu__link:focus-visible {
+      background: var(--color-surface-soft);
+    }
+
+    .mobile-menu__icon {
+      flex: 0 0 20px;
+      justify-content: center;
+      gap: 2px;
+    }
+
+    .mobile-menu__icon i:first-child {
+      width: 8px;
+      height: 8px;
+      border-radius: var(--radius-pixel);
+      background: var(--color-brand-primary);
+    }
+
+    .mobile-menu__icon i:last-child {
+      width: 6px;
+      height: 6px;
+      border-radius: var(--radius-pixel);
+      background: var(--color-ink);
+    }
+
+    .mobile-menu__active-indicator {
+      width: 4px;
+      height: 24px;
+      margin-left: auto;
+      border-radius: var(--radius-pixel);
+      background: var(--color-brand-primary);
+    }
+  }
+
+  @keyframes menu-fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  @keyframes sheet-rise {
+    from { transform: translateY(calc(100% + 16px)); }
+    to { transform: translateY(0); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .desktop-cta,
+    .mobile-menu-trigger span,
+    .mobile-menu__sheet {
+      transition: none;
+    }
+
+    .mobile-menu::backdrop,
+    .mobile-menu__sheet {
+      animation: none;
     }
   }
 </style>
-
