@@ -1,101 +1,140 @@
 ---
 import Base from '../layouts/base.astro'
+import ProductCard from '../components/home/ProductCard.astro'
 import { site } from '../config/site.js'
+import { sanity, urlFor } from '../lib/sanity.js'
+
+const shopCategories = [
+  ['Phone Accessories', 'Playful carry-everywhere details', '/pet-collection/phone-accessories', 'phone-accessories.png'],
+  ['Personal Accessories', 'Soft details for daily rituals', '/pet-collection/personal-accessories', 'personal-accessories.png'],
+  ['Book Station', 'Tiny stories, stitched in', '/pet-collection/book-station', 'book-station.png'],
+  ['Lifestyle', 'Sustainable styles for every outing', '/pet-collection/lifestyle', 'lifestyle.png'],
+  ['Patch DIY Customized', 'Make-it-yourself moments', '/patch-collection', 'patch-diy.png'],
+  ['Patch Collection', 'Make-it-yourself moments', '/patch-collection', 'patch-diy.png'],
+]
+
+const promises = [
+  ['Flexible manufacturing lines', 'Own and operate state-of-the-art embroidery facilities'],
+  ['Integrated global logistics', 'Seamless door-to-door shipping directly'],
+  ['Customized product service', 'Endless customization for your feature and store set up'],
+]
+
+const businessModels = [
+  ['Corporate Gifting & Event B2B Solutions', 'Thoughtful embroidery for each occasion.', 'corporate-gifting.svg'],
+  ['Wholesale & OEM/ODM', 'Grow a tailored local partnership.', 'wholesale-oem.svg'],
+  ['Co-Branding', 'Bring a shared collection to life.', 'co-branding.svg'],
+  ['Turnkey Retail', 'A ready-to-display program for your store.', 'turnkey-retail.svg'],
+]
+
+const factoryPoints = [
+  ['Made in our own factory', 'In-house production, from thread to finish.'],
+  ['Consistent quality control', 'Every order follows the same approved production checks.'],
+  ['Flexible order terms for growing stores', 'Order quantities and production plans built for your store stage.'],
+  ['OEM & custom craftsmanship welcome', 'Share your idea and our factory team will help make it production-ready.'],
+]
+
+const bestSellers = await sanity.fetch(`*[_type == "product" && isBestSell == true && status == "published"] | order(_createdAt desc)[0...8]{productname,slug,coverImage,"selectCollection":selectCollection->{title}}`).catch(() => [])
+const productSlots = Array.from({ length: 8 }, (_, index) => bestSellers[index] ?? null)
+const productImageUrl = (product) => product?.coverImage ? urlFor(product.coverImage).width(700).height(430).fit('crop').auto('format').url() : null
 ---
 
 <Base title={site.defaultTitle} description={site.defaultDescription}>
-  <section class="hero">
-    <div class="hero__content">
-      <p class="hero__eyebrow">ORILABオリ · WHOLESALE</p>
+  <section class="hero" aria-labelledby="hero-title">
+    <div class="hero__media">
+      <!-- Replace only hero-embroidery-loop.mp4. Desktop: 1328 × 490px; mobile: 343 × 532px. -->
+      <video class="hero__video" autoplay muted loop playsinline preload="metadata" aria-hidden="true"><source src="/media/hero-embroidery-loop.mp4" type="video/mp4" /></video>
+      <div class="hero__shade" aria-hidden="true"></div>
+      <div class="hero__content">
+        <h1 id="hero-title">Your Daily Pixel Fluffy Pet World</h1>
+        <p>Wholesale embroidered patches & lifestyle goods — crafted in our own factory. Let your store live in your customers' pockets.</p>
+        <div class="hero__actions">
+          <a class="button button--outline" href="#shop-by-need">Browse Collections</a>
+          <a class="button button--orange" href="/contact?intent=wholesale-order">Start Your Order</a>
+        </div>
+      </div>
+    </div>
+  </section>
 
-      <h1>Your Daily Pixel Fluffy Pet World</h1>
+  <section class="promise section" aria-labelledby="promise-title">
+    <h2 id="promise-title" class="section-title">Shopping Promise</h2>
+    <div class="promise__grid">
+      {promises.map(([title, description]) => (
+        <article class="promise-card"><span class="pixel-mark" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span><div><h3>{title}</h3><p>{description}</p></div></article>
+      ))}
+    </div>
+  </section>
 
-      <p>
-        Wholesale embroidered patches and pet lifestyle goods —
-        crafted in our own factory.
-      </p>
+  <section id="shop-by-need" class="shop section" aria-labelledby="shop-title">
+    <h2 id="shop-title" class="section-title">Shop by Your Needs</h2>
+    <div class="shop__grid">
+      {shopCategories.map(([title, description, href, image]) => (
+        <a class="category-card" href={href}><img src={`/images/home/categories/${image}`} alt="" width="131" height="108" loading="lazy" /><h3>{title}</h3><p>{description}</p></a>
+      ))}
+    </div>
+    <div class="shop__pages" aria-hidden="true"><span class="is-active"></span><span></span><span></span></div>
+  </section>
 
-      
+  <section class="best-sellers section" aria-labelledby="best-sellers-title">
+    <div class="best-sellers__heading"><h2 id="best-sellers-title" class="section-title">Best Sellers</h2><a href="/pet-collection">View All <span aria-hidden="true">→</span></a></div>
+    <div class="best-sellers__grid">{productSlots.map((product, index) => <ProductCard product={product} imageUrl={productImageUrl(product)} index={index} />)}</div>
+  </section>
+
+  <section class="theme" aria-label="Explore our collections">
+    <a class="theme-card theme-card--pet" href="/pet-collection">
+      <!-- Replace only pet-collection-loop.gif. Desktop: 720 × 466px; mobile: 375 × 378px. -->
+      <img src="/media/pet-collection-loop.gif" alt="" aria-hidden="true" /><span class="theme-card__veil" aria-hidden="true"></span>
+      <span class="theme-card__content"><strong>Pet Collection</strong><small>Everyday companions made for soft, characterful living.</small><span class="button button--small button--outline">Explore More</span></span>
+    </a>
+    <a class="theme-card theme-card--patch" href="/patch-collection">
+      <!-- Replace only patch-collection-loop.gif. Desktop: 720 × 466px; mobile: 375 × 180px. -->
+      <img src="/media/patch-collection-loop.gif" alt="" aria-hidden="true" /><span class="theme-card__veil" aria-hidden="true"></span>
+      <span class="theme-card__content"><strong>Patch Collection</strong><small>DIY patches your customers iron on, love, and keep.</small><span class="button button--small button--outline">Explore More</span></span>
+    </a>
+  </section>
+
+  <section class="business" aria-labelledby="business-title">
+    <h2 id="business-title" class="section-title">All Business Models Available</h2>
+    <div class="business__grid">
+      {businessModels.map(([title, description, icon], index) => <article class:list={['business-card', { 'business-card--featured': index === 0 }]}><img src={`/images/home/business/${icon}`} alt="" width="45" height="45" /><h3>{title}</h3><p>{description}</p></article>)}
+    </div>
+  </section>
+
+  <section class="factory section" aria-labelledby="factory-title">
+    <h2 id="factory-title" class="section-title">Made in Our Own Factory</h2>
+    <div class="factory__grid">
+      <div class="factory__visual">
+        <!-- Replace only factory-craftsmanship.png. Desktop: 620 × 420px; mobile: 375 × 225px. -->
+        <img src="/images/home/factory-craftsmanship.png" alt="Embroidery machinery and threads in an orilab production workspace" loading="lazy" />
+        <div class="factory__caption"><strong>FROM THREAD TO FINISH</strong><span>Made in our own factory</span></div>
+      </div>
+      <div class="factory__accordion" data-factory-accordion>
+        {factoryPoints.map(([title, description], index) => <details open={index === 0}><summary>{title}<span aria-hidden="true"></span></summary><p>{description}</p></details>)}
+      </div>
     </div>
   </section>
 </Base>
 
+<script>
+  document.querySelectorAll('[data-factory-accordion]').forEach((accordion) => {
+    accordion.querySelectorAll('details').forEach((item) => {
+      item.addEventListener('toggle', () => {
+        if (!item.open) return
+        accordion.querySelectorAll('details[open]').forEach((openItem) => { if (openItem !== item) openItem.removeAttribute('open') })
+      })
+    })
+  })
+</script>
+
 <style>
-  .hero {
-    display: grid;
-    min-height: 620px;
-    place-items: center;
-    padding: 120px 24px 72px;
-    background: var(--color-surface-soft);
-  }
-
-  .hero__content {
-    width: min(900px, 100%);
-    text-align: center;
-  }
-
-  .hero__eyebrow {
-    margin: 0 0 18px;
-    color: var(--color-brand-primary);
-    font-family: var(--font-pixel);
-    font-size: 11px;
-    line-height: 16px;
-  }
-
-  h1 {
-    margin: 0;
-    color: var(--color-ink);
-    font-size: clamp(36px, 7vw, 72px);
-    font-weight: 500;
-    line-height: 1.18;
-  }
-
-  .hero__content > p:not(.hero__eyebrow) {
-    max-width: 650px;
-    margin: 24px auto 0;
-    color: var(--color-muted);
-    font-size: 16px;
-    line-height: 1.6;
-  }
-
-  .hero__actions {
-    display: flex;
-    justify-content: center;
-    gap: 12px;
-    margin-top: 32px;
-  }
-
-  .hero__primary,
-  .hero__secondary {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 44px;
-    padding: 0 18px;
-    border-radius: var(--radius-control);
-    font-size: 14px;
-    text-decoration: none;
-  }
-
-  .hero__primary {
-    background: var(--color-interactive);
-    color: white;
-  }
-
-  .hero__secondary {
-    border: 1px solid var(--color-border);
-    background: white;
-    color: var(--color-ink);
-  }
-
-  @media (max-width: 600px) {
-    .hero {
-      min-height: 520px;
-      padding-top: 96px;
-    }
-
-    .hero__actions {
-      flex-direction: column;
-    }
-  }
+  .section{padding-right:max(24px,calc((100vw - 1328px)/2));padding-left:max(24px,calc((100vw - 1328px)/2))}.section-title{margin:0;color:var(--color-ink);font-family:var(--font-display);font-size:32px;font-weight:700;letter-spacing:-.02em;line-height:1.2}.button{display:inline-flex;min-height:44px;align-items:center;justify-content:center;padding:12px 16px;border:1px solid transparent;border-radius:var(--radius-control);font-size:12px;font-weight:500;line-height:18px;text-decoration:none;transition:transform .18s ease,background-color .18s ease}.button:hover{transform:translateY(-2px)}.button:focus-visible,.category-card:focus-visible,.theme-card:focus-visible{outline:3px solid rgb(30 30 27/.45);outline-offset:3px}.button--outline{border-color:var(--color-ink);background:rgb(255 255 255/.88);color:var(--color-ink)}.button--orange{background:var(--color-brand-primary);color:white;font-weight:800}.button--orange:hover{background:var(--color-brand-primary-hover)}.button--small{min-height:32px;padding:7px 15px;border-color:var(--color-brand-primary);font-size:12px;font-weight:800}
+  .hero{padding:40px max(24px,calc((100vw - 1328px)/2));background:var(--color-surface)}.hero__media{position:relative;display:grid;min-height:490px;overflow:hidden;place-items:center;border:1px solid var(--color-border);border-radius:var(--radius-card);background:var(--color-surface-soft);isolation:isolate}.hero__video{position:absolute;z-index:-3;width:100%;height:100%;object-fit:cover}.hero__shade{position:absolute;z-index:-2;inset:0;background:linear-gradient(90deg,rgb(245 245 242/.94),rgb(245 245 242/.75) 31%,rgb(245 245 242/.38) 64%,rgb(245 245 242/.2))}.hero__content{width:min(788px,calc(100% - 40px));text-align:center}.hero__content h1{max-width:788px;margin:0 auto;color:var(--color-ink);font-family:var(--font-pixel);font-size:32px;font-weight:400;line-height:44px}.hero__content>p{max-width:476px;margin:22px auto 0;color:var(--color-muted);font-size:16px;line-height:22px}.hero__actions{display:flex;justify-content:center;gap:12px;margin-top:18px}.hero__actions .button{width:184px}
+  .promise{padding-top:26px;padding-bottom:37px;background:var(--color-surface);text-align:center}.promise__grid{display:grid;max-width:1328px;grid-template-columns:repeat(3,1fr);gap:32px;margin:32px auto 0;text-align:left}.promise-card{display:flex;min-height:103px;align-items:center;justify-content:center;gap:12px;padding:18px 30px;border:1px solid var(--color-border);border-radius:var(--radius-card);background:var(--color-surface)}.promise-card h3,.promise-card p{margin:0}.promise-card h3{font-size:20px;font-weight:500;line-height:30px}.promise-card p{margin-top:2px;color:var(--color-muted);font-size:12px;line-height:18px}.pixel-mark{position:relative;display:block;width:40px;height:40px;flex:0 0 40px}.pixel-mark i{position:absolute;display:block;width:8px;height:8px;background:var(--color-brand-primary)}.pixel-mark i:nth-child(1){top:8px;left:0}.pixel-mark i:nth-child(2){top:0;left:8px;width:16px;background:var(--color-brand-accent)}.pixel-mark i:nth-child(3){top:8px;left:16px}.pixel-mark i:nth-child(4){top:16px;left:24px;background:var(--color-brand-accent)}.pixel-mark i:nth-child(5){top:24px;left:8px;width:16px}
+  .shop{padding-top:31px;padding-bottom:22px;background:var(--color-surface);text-align:center}.shop__grid{display:grid;max-width:1302px;grid-template-columns:repeat(6,1fr);gap:24px;margin:23px auto 0}.category-card{display:flex;min-width:0;min-height:267px;flex-direction:column;align-items:center;padding:20px;border-radius:24px;background:var(--color-surface);box-shadow:0 12px 24px rgb(60 44 51/.14);text-decoration:none;transition:transform .18s ease,box-shadow .18s ease}.category-card:hover{transform:translateY(-5px);box-shadow:0 18px 28px rgb(60 44 51/.18)}.category-card img{width:131px;height:108px;object-fit:contain}.category-card h3{min-height:60px;margin:5px 0 0;color:var(--color-ink);font-size:20px;font-weight:500;line-height:30px}.category-card p{min-height:36px;margin:0;color:var(--color-muted);font-size:12px;line-height:18px}.shop__pages{display:flex;justify-content:center;gap:8px;margin-top:18px}.shop__pages span{display:block;width:12px;height:12px;border-radius:99px;background:var(--color-border)}.shop__pages .is-active{width:32px;background:var(--color-brand-primary)}
+  .best-sellers{padding-top:38px;padding-bottom:80px;background:var(--color-surface)}.best-sellers__heading{display:flex;max-width:1328px;align-items:center;justify-content:space-between;margin:0 auto}.best-sellers__heading a{color:var(--color-ink);font-size:12px;font-weight:800;text-decoration:none}.best-sellers__heading a span{margin-left:6px;color:var(--color-brand-primary);font-size:18px;vertical-align:-1px}.best-sellers__grid{display:grid;max-width:1328px;grid-template-columns:repeat(4,1fr);gap:24px;margin:31px auto 0}
+  .theme{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));background:var(--color-surface)}.theme-card{position:relative;display:grid;min-height:466px;overflow:hidden;place-items:center;color:var(--color-ink);isolation:isolate;text-decoration:none}.theme-card>img{position:absolute;z-index:-3;width:100%;height:100%;object-fit:cover;filter:sepia(20%) saturate(72%);transform:scale(1.03);transition:transform 1s ease}.theme-card--patch>img{filter:grayscale(18%) sepia(16%) saturate(77%)}.theme-card:hover>img{transform:scale(1.11)}.theme-card__veil{position:absolute;z-index:-2;inset:0;background:rgb(245 245 242/.77)}.theme-card--patch .theme-card__veil{background:rgb(233 233 233/.8)}.theme-card__content{display:flex;max-width:440px;flex-direction:column;align-items:center;padding:16px;text-align:center}.theme-card__content strong{font-size:20px;font-weight:500;line-height:30px}.theme-card__content small{margin-top:6px;color:var(--color-muted);font-size:12px;line-height:18px}.theme-card__content .button{margin-top:12px}
+  .business{padding:35px max(24px,calc((100vw - 1320px)/2)) 41px;background:var(--color-brand-primary)}.business .section-title{text-align:center}.business__grid{display:grid;max-width:1320px;grid-template-columns:repeat(4,1fr);gap:17px;margin:41px auto 0}.business-card{min-height:202px;padding:20px 25px;border:1px solid white;border-radius:var(--radius-card);background:rgb(255 255 255/.19);transition:transform .18s ease,background-color .18s ease,box-shadow .18s ease}.business-card:hover{transform:translateY(-6px);background:rgb(255 255 255/.75);box-shadow:0 16px 24px rgb(121 75 22/.17)}.business-card--featured{background:rgb(255 255 255/.75)}.business-card img{display:block;width:45px;height:45px;object-fit:contain}.business-card h3,.business-card p{margin:0}.business-card h3{min-height:60px;margin-top:12px;font-size:20px;font-weight:500;line-height:30px}.business-card p{margin-top:12px;color:var(--color-muted);font-size:12px;line-height:18px}
+  .factory{padding-top:47px;padding-bottom:80px;background:var(--color-surface)}.factory>.section-title{max-width:1328px;margin:0 auto}.factory__grid{display:grid;max-width:1328px;grid-template-columns:620px 620px;gap:37px;margin:32px auto 0}.factory__visual{position:relative;height:420px;overflow:hidden;border:1px solid var(--color-border);border-radius:var(--radius-card);background:var(--color-surface-soft)}.factory__visual>img{width:100%;height:100%;object-fit:cover}.factory__visual::after{position:absolute;inset:0;background:linear-gradient(90deg,rgb(245 245 242/.84),transparent 68%);content:''}.factory__caption{position:absolute;z-index:1;top:53px;left:39px;display:grid;gap:6px}.factory__caption strong{font-size:20px;font-weight:500;line-height:30px}.factory__caption span{color:var(--color-muted);font-size:12px;line-height:18px}.factory__accordion{display:grid;align-content:start;gap:12px}.factory__accordion details{overflow:hidden;border:1px solid var(--color-border);border-radius:var(--radius-control);background:var(--color-surface);transition:border-color .18s ease}.factory__accordion details[open]{border-color:var(--color-brand-primary)}.factory__accordion summary{display:flex;min-height:73px;align-items:center;justify-content:space-between;padding:16px 24px;list-style:none;color:var(--color-ink);font-size:16px;line-height:22px;cursor:pointer}.factory__accordion summary::-webkit-details-marker{display:none}.factory__accordion summary span::before{color:var(--color-brand-primary);font-size:24px;line-height:1;content:'+'}.factory__accordion details[open] summary span::before{content:'−'}.factory__accordion p{margin:-5px 24px 16px;color:var(--color-muted);font-size:12px;line-height:18px}
+  @media(max-width:1100px){.promise__grid{gap:16px}.promise-card{padding-inline:18px}.shop__grid{grid-template-columns:repeat(3,minmax(0,197px));justify-content:center}.factory__grid{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:24px}}
+  @media(max-width:767px){.section{padding-right:16px;padding-left:16px}.section-title{font-size:28px}.hero{padding:20px 16px}.hero__media{min-height:532px}.hero__shade{background:rgb(245 245 242/.73)}.hero__content{width:min(295px,calc(100% - 32px))}.hero__content h1{font-size:22px;line-height:34px}.hero__content>p{margin-top:18px;font-size:14px;line-height:21px}.hero__actions{flex-direction:column;align-items:stretch;margin-top:24px}.hero__actions .button{width:100%}.promise{padding-top:28px;padding-bottom:34px}.promise__grid{grid-template-columns:1fr;gap:12px;margin-top:24px}.promise-card{min-height:110px;justify-content:flex-start;padding:18px}.promise-card h3{font-size:18px;line-height:26px}.shop{padding-top:28px}.shop__grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:13px;margin-top:22px}.category-card{min-height:256px;padding:17px 10px}.category-card img{width:108px;height:100px}.category-card h3{min-height:60px;margin-top:4px;font-size:16px;line-height:24px}.category-card p{min-height:42px;font-size:11px;line-height:16px}.best-sellers{padding-top:42px;padding-bottom:56px}.best-sellers__grid{grid-template-columns:1fr;gap:16px;margin-top:24px}.best-sellers__grid :global(.product-card:nth-child(n + 7)){display:none}.theme{grid-template-columns:1fr}.theme-card{min-height:378px}.theme-card--patch{min-height:180px}.theme-card--patch .theme-card__content small,.theme-card--patch .theme-card__content .button{display:none}.business{padding-top:34px;padding-bottom:36px}.business__grid{grid-template-columns:1fr;gap:12px;margin-top:25px}.business-card{min-height:202px}.factory{padding-top:38px;padding-bottom:48px}.factory>.section-title{margin-inline:0}.factory__grid{grid-template-columns:1fr;margin-top:22px}.factory__visual{height:225px}.factory__caption{top:26px;left:24px}.factory__caption strong{font-size:16px;line-height:24px}.factory__accordion{display:none}}
+  @media(prefers-reduced-motion:reduce){.button,.category-card,.business-card,.theme-card>img{transition:none}.button:hover,.category-card:hover,.business-card:hover{transform:none}}
 </style>

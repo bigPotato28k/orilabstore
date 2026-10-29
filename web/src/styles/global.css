@@ -13,6 +13,14 @@
   font-display: swap;
 }
 
+@font-face {
+  font-family: "Google Sans Flex";
+  src: url("/fonts/GoogleSansFlex-VariableFont_ROND,opsz,slnt,wdth,wght.woff2") format("woff2");
+  font-weight: 100 1000;
+  font-style: normal;
+  font-display: swap;
+}
+
 :root {
   --color-brand-primary: #e6a23c;
   --color-brand-primary-hover: #c78323;
@@ -33,7 +41,8 @@
   --radius-shell: 20px;
 
   --font-pixel: "Press Start 2P", monospace;
-  --font-body: "Noto Sans TC", Arial, sans-serif;
+  --font-body: "Noto Sans TC", sans-serif;
+  --font-display: "Google Sans Flex", "Noto Sans TC", sans-serif;
 }
 
 * {

@@ -1,0 +1,11 @@
+---
+import Base from '../../layouts/base.astro'
+import MarketPage from '../../components/market/MarketPage.astro'
+import { sanity } from '../../lib/sanity.js'
+import { getMarketData } from '../../lib/catalog.js'
+export async function getStaticPaths() { const entries = await sanity.fetch(`*[_type == "petcollection" && isActive != false && defined(slug.current)]{ "slug": slug.current }`); return entries.map(({slug}) => ({params:{slug}})) }
+const data = await getMarketData('pet')
+const selected = data.collections.find((collection) => collection.slug.current === Astro.params.slug)
+if (!selected) return Astro.redirect('/pet-collection')
+---
+<Base title={`${selected.name} | orilabオリ`} description="Explore this orilab pet collection."><MarketPage {...data} initialFilter={selected._id} /></Base>

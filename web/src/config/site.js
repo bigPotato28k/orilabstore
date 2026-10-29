@@ -28,7 +28,7 @@ export const site = {
       href: '/contact',
     },
     seasonalPoster: {
-      src: '/images/menu-seasonal-poster.webp',
+      src: '/menu sesonal poster.webp',
       alt: 'A selection of orilab embroidered patches and stationery',
       width: 650,
       height: 330,

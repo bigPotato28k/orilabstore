@@ -1,0 +1,7 @@
+---
+import Base from '../../layouts/base.astro'
+import MarketPage from '../../components/market/MarketPage.astro'
+import { getMarketData } from '../../lib/catalog.js'
+const data = await getMarketData('pet')
+---
+<Base title="Pet Collection Market | orilabオリ" description="Browse orilab pet and lifestyle collection products for wholesale."><MarketPage {...data} /></Base>
